@@ -3,11 +3,13 @@ package com.cwt.productservice.query;
 import com.cwt.productservice.core.data.ProductEntity;
 import com.cwt.productservice.core.data.ProductsRepository;
 import com.cwt.productservice.core.event.ProductCreatedEvent;
+import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@ProcessingGroup("product-group")
 public class ProductEventsHandler {
 
     private final ProductsRepository productsRepository;
