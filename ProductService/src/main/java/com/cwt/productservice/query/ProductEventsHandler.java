@@ -8,11 +8,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductEventHandler {
+public class ProductEventsHandler {
 
     private final ProductsRepository productsRepository;
 
-    public ProductEventHandler(ProductsRepository productsRepository) {
+    public ProductEventsHandler(ProductsRepository productsRepository) {
         this.productsRepository = productsRepository;
     }
 

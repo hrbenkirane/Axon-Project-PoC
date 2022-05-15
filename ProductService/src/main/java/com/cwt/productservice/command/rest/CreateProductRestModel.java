@@ -1,4 +1,4 @@
-package com.cwt.productservice.rest;
+package com.cwt.productservice.command.rest;
 
 import lombok.Data;
 

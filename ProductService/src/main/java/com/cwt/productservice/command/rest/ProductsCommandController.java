@@ -1,7 +1,6 @@
-package com.cwt.productservice.rest;
+package com.cwt.productservice.command.rest;
 
 import com.cwt.productservice.command.CreateProductCommand;
-import com.netflix.discovery.converters.Auto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -11,13 +10,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
-public class ProductsController {
+public class ProductsCommandController {
 
     private final Environment environment;
     private final CommandGateway commandGateway;
 
     @Autowired
-    public ProductsController(Environment environment, CommandGateway commandGateway) {
+    public ProductsCommandController(Environment environment, CommandGateway commandGateway) {
         this.environment = environment;
         this.commandGateway = commandGateway;
     }
