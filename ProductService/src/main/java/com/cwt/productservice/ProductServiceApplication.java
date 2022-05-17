@@ -1,7 +1,9 @@
 package com.cwt.productservice;
 
 import com.cwt.productservice.command.interceptors.CreateProductCommandInterceptor;
+import com.cwt.productservice.core.errorhandling.ProductsServiceEventsErrorHandler;
 import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.config.EventProcessingConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,6 +21,14 @@ public class ProductServiceApplication {
     @Autowired
     public void registerCreateProductCommandInterceptor(ApplicationContext context, CommandBus commandBus) {
         commandBus.registerDispatchInterceptor(context.getBean(CreateProductCommandInterceptor.class));
+    }
+
+    @Autowired
+    public void configure(EventProcessingConfigurer config) {
+        config.registerListenerInvocationErrorHandler("product-group",
+                conf -> new ProductsServiceEventsErrorHandler());
+        // here you dann use instead also
+        // conf -> PropagatingErrorHandler.instance()
     }
 
 }

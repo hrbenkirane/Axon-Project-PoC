@@ -20,8 +20,8 @@ public class ProductEventsHandler {
     }
 
     @ExceptionHandler(resultType = Exception.class)
-    public void handle(Exception exception) {
-        // log error message
+    public void handle(Exception exception) throws Exception {
+       throw exception;
     }
 
     @ExceptionHandler(resultType = IllegalArgumentException.class)
