@@ -1,5 +1,7 @@
 package com.cwt.productservice.query;
 
+import com.cwt.core.events.ProductReservedCancelledEvent;
+import com.cwt.core.events.ProductReservedEvent;
 import com.cwt.productservice.core.data.ProductEntity;
 import com.cwt.productservice.core.data.ProductsRepository;
 import com.cwt.productservice.core.event.ProductCreatedEvent;
@@ -34,5 +36,20 @@ public class ProductEventsHandler {
         ProductEntity productEntity = new ProductEntity();
         BeanUtils.copyProperties(event, productEntity);
         productsRepository.save(productEntity);
+    }
+
+    @EventHandler
+    public void on(ProductReservedEvent event) {
+        ProductEntity productEntity = productsRepository.findByProductId(event.getProductId());
+        productEntity.setQuantity(productEntity.getQuantity() - event.getQuantity());
+        productsRepository.save(productEntity);
+    }
+
+    @EventHandler
+    public void on(ProductReservedCancelledEvent event) {
+        ProductEntity currentlyStoredProduct = productsRepository.findByProductId(event.getProductId());
+        int newQuantity = currentlyStoredProduct.getQuantity() + event.getQuantity();
+        currentlyStoredProduct.setQuantity(newQuantity);
+        productsRepository.save(currentlyStoredProduct)
     }
 }

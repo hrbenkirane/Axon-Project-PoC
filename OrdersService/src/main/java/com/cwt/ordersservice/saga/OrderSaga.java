@@ -4,11 +4,19 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import com.cwt.core.commands.CancelProductReservationCommand;
+import com.cwt.core.commands.ProcessPaymentCommand;
+import com.cwt.core.commands.ReserveProductCommand;
+import com.cwt.core.events.ProductReservedCancelledEvent;
+import com.cwt.core.events.ProductReservedEvent;
+import com.cwt.core.model.User;
+import com.cwt.core.query.FetchUserPaymentDetailsQuery;
 import com.cwt.ordersservice.command.commands.ApproveOrderCommand;
 import com.cwt.ordersservice.command.commands.RejectOrderCommand;
 import com.cwt.ordersservice.core.events.OrderApprovedEvent;
 import com.cwt.ordersservice.core.events.OrderCreatedEvent;
 import com.cwt.ordersservice.core.events.OrderRejectedEvent;
+import com.cwt.ordersservice.core.events.PaymentProcessedEvent;
 import com.cwt.ordersservice.core.model.OrderSummary;
 import org.axonframework.commandhandling.CommandCallback;
 import org.axonframework.commandhandling.CommandMessage;
@@ -28,14 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cwt.ordersservice.query.FindOrderQuery;
-import com.appsdeveloperblog.estore.core.commands.CancelProductReservationCommand;
-import com.appsdeveloperblog.estore.core.commands.ProcessPaymentCommand;
-import com.appsdeveloperblog.estore.core.commands.ReserveProductCommand;
-import com.appsdeveloperblog.estore.core.events.PaymentProcessedEvent;
-import com.appsdeveloperblog.estore.core.events.ProductReservationCancelledEvent;
-import com.appsdeveloperblog.estore.core.events.ProductReservedEvent;
-import com.appsdeveloperblog.estore.core.model.User;
-import com.appsdeveloperblog.estore.core.query.FetchUserPaymentDetailsQuery;
+
 
 @Saga
 public class OrderSaga {
@@ -98,7 +99,7 @@ public class OrderSaga {
         LOGGER.info("ProductReserveddEvent is called for productId: "+ productReservedEvent.getProductId() + 
         		" and orderId: " + productReservedEvent.getOrderId());
         
-        FetchUserPaymentDetailsQuery fetchUserPaymentDetailsQuery = 
+        FetchUserPaymentDetailsQuery fetchUserPaymentDetailsQuery =
         		new FetchUserPaymentDetailsQuery(productReservedEvent.getUserId());
         
         User userPaymentDetails = null;
@@ -153,7 +154,7 @@ public class OrderSaga {
 		
 		cancelDeadline();
 		
-		CancelProductReservationCommand publishProductReservationCommand = 
+		CancelProductReservationCommand publishProductReservationCommand =
 				CancelProductReservationCommand.builder()
 				.orderId(productReservedEvent.getOrderId())
 				.productId(productReservedEvent.getProductId())
@@ -198,7 +199,7 @@ public class OrderSaga {
 	}
 
 	@SagaEventHandler(associationProperty="orderId")
-	public void handle(ProductReservationCancelledEvent productReservationCancelledEvent) {
+	public void handle(ProductReservedCancelledEvent productReservationCancelledEvent) {
 		// Create and send a RejectOrderCommand
 		RejectOrderCommand rejectOrderCommand = new RejectOrderCommand(productReservationCancelledEvent.getOrderId(),
 				productReservationCancelledEvent.getReason());
